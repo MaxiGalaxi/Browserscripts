@@ -1,0 +1,39 @@
+// ==UserScript==
+// @name         Recipe First
+// @version      0.9
+// @description  Moves the WP Recipe Maker container directly below <header class="entry-header">.
+// @match        *://biancazapatka.com/*
+// @run-at       document-idle
+// ==/UserScript==
+
+(() => {
+  "use strict";
+
+  const TARGET_SELECTOR = ".wprm-recipe-container";
+  const HEADER_SELECTOR = "header.entry-header";
+  const REASSERT_MS = 500;
+
+  function moveRecipe() {
+    const header = document.querySelector(HEADER_SELECTOR);
+    const recipe = document.querySelector(TARGET_SELECTOR);
+
+    if (!header || !recipe) return;
+    // Check if already in place
+    if (header.nextElementSibling === recipe) return;
+
+    header.insertAdjacentElement("afterend", recipe);
+  }
+
+  // Move
+  moveRecipe();
+
+  // Observe DOM changes
+  const observer = new MutationObserver(moveRecipe);
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+  });
+
+  // Periodic Check (ads and stuff)
+  setInterval(moveRecipe, REASSERT_MS);
+})();
